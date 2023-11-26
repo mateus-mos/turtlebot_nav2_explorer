@@ -89,7 +89,7 @@ class Explore(Node):
         self.get_logger().info(f"goal: {goal.pose.pose.position.x, goal.pose.pose.position.y}")
         self.get_logger().info(f"robot: {self.robot_x, self.robot_y}")
         # Send the goal to the NavigateToPose action server
-        self.goal = self.navigate_to_pose.send_goal_async(goal, feedback_callback=self.goal_status)
+        self.navigate_to_pose.send_goal_async(goal, feedback_callback=self.goal_status)
 
     
     def goal_response_callback(self, future):
@@ -98,14 +98,18 @@ class Explore(Node):
 
     def goal_status(self, feedback):
 
-
-
-        # Check if the goal is reached
         distance_remaining = feedback.feedback.distance_remaining
-        # if distance_remaining == 0:
-           # self.get_logger().info("Goal succeeded")
-           # self.get_logger().info(f"Distance remaining: {distance_remaining}")
-
+        recoveries = feedback.feedback.number_of_recoveries
+        self.get_logger().info(f"Distance remaining: {distance_remaining}")
+        # Check if the goal is reached
+        if distance_remaining < 0.5:
+            self.get_logger().info("Goal succeeded")
+            self.completion = True
+        
+        if recoveries > 1:
+            self.get_logger().info("Goal failed")
+            self.completion = True
+        
         # You can add more conditions here based on the feedback
         # For example, you might want to handle cases where the robot is stuck and the distance remaining is not changing
 
