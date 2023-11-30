@@ -106,7 +106,7 @@ class Explore(Node):
             self.get_logger().info("Goal succeeded")
             self.completion = True
         
-        if recoveries > 1:
+        if recoveries > 0:
             self.get_logger().info("Goal failed")
             self.completion = True
         
